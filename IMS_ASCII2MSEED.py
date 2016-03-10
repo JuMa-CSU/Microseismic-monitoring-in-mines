@@ -25,6 +25,7 @@ Copyright 2016
 import os
 import time
 import shutil
+import datetime
 import subprocess
 from distutils.dir_util import copy_tree
 
@@ -103,10 +104,20 @@ for i in range(len(ASCII_files_list_ready_for_convert)):
     SourceName='TIMESERIES IMS'+ASCII_files_list_ready_for_convert[i][-17:-11]+'_'+ASCII_files_list_ready_for_convert[i][-1]
     lines=f1.readlines()
     samples=str(len(lines))+' samples'
-    sps=file(ASCII_files_list[i/3], 'r').readlines()[0].split(',')[1][:-2]+' sps'   
+    
+    sensor_sampling_rate=file(ASCII_files_list[i/3], 'r').readlines()[0].split(',')[1][:-2]
+    sps=sensor_sampling_rate+' sps'   
+      
     trigger_time_seconds=file(ASCII_files_list[i/3], 'r').readlines()[0].split(',')[5]
     trigger_time_microseconds=file(ASCII_files_list[i/3], 'r').readlines()[0].split(',')[6]  
-    Time=time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(float(trigger_time_seconds)))+'.'+str(trigger_time_microseconds)	
+    sample_number_of_triggrt_time_relative_to_first_seismogram_sample=file(ASCII_files_list[i/3], 'r').readlines()[0].split(',')[10]
+    first_sample_time_prior_to_trigger_time=int(sample_number_of_triggrt_time_relative_to_first_seismogram_sample)/float(sensor_sampling_rate)
+    
+    trigger_time_in_local_time_formate=time.strftime("%Y,%m,%d,%H,%M,%S", time.gmtime(float(trigger_time_seconds)))
+ 
+    Time=datetime.datetime.strptime(trigger_time_in_local_time_formate, '%Y,%m,%d,%H,%M,%S')+datetime.timedelta(seconds=float(trigger_time_microseconds+'e-06'))-datetime.timedelta(seconds=first_sample_time_prior_to_trigger_time)  #Time of first sample in ISO YYYY-MM-DDTHH:MM:SS.FFFFFF    
+    Time=Time.strftime("%Y-%m-%dT%H:%M:%S.%f")
+    
     Format='SLIST'
     Type='FLOAT'
     Units='M/S'
@@ -133,7 +144,7 @@ shutil.rmtree(outputfiles1)
 shutil.rmtree(outputfiles2)
 shutil.rmtree(outputfiles3)
 
-
+print 'WELL DONE, FINISH !'
 
 
 
