@@ -16,3 +16,19 @@ Don't forget copy the executable ascii2mseed file to /usr/bin/.
 
 
 Copyright 2016 
+____________________________________________________________________________________________________
+"""
+READ_PPV
+
+Created on Mon Mar  7 09:40:34 2016
+
+@author:Ju Ma           Savka Dineva 
+EMAIL:  ju.ma@ltu.se    sdineva@ltu.se
+
+
+THIS SCRIPT IS USED TO READ IMS ASCII DATA AND WRITE THE PPVs IN EACH TRIGGER INTO A NEW FILE
+THE OUTPUT WILL BE STORED IN 'PPV.txt'.
+
+Copyright 2016 
+
+"""
