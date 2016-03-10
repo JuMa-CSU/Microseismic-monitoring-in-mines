@@ -22,8 +22,8 @@ READ_PPV
 
 Created on Mon Mar  7 09:40:34 2016
 
-@author:Ju Ma           Savka Dineva 
-EMAIL:  ju.ma@ltu.se    sdineva@ltu.se
+@author:Ju Ma           
+EMAIL:  ju.ma@ltu.se    
 
 
 THIS SCRIPT IS USED TO READ IMS ASCII DATA AND WRITE THE PPVs IN EACH TRIGGER INTO A NEW FILE
