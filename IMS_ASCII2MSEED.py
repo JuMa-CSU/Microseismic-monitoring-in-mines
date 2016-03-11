@@ -23,11 +23,13 @@ Copyright 2016
 
 
 import os
+import csv
 import time
 import shutil
 import datetime
 import subprocess
 from distutils.dir_util import copy_tree
+start = time.time()#Measuring Execution Times
 
 inputfiles=os.path.realpath(__file__)[:-22]+'ASCII'
 outputfiles1=os.path.realpath(__file__)[:-22]+'ASCII_CR'#CR MEANS COMMA REPLACED
@@ -35,8 +37,7 @@ outputfiles2=os.path.realpath(__file__)[:-22]+'ASCII_CI'#CI MEANS CHANNEL INDIVI
 outputfiles3=os.path.realpath(__file__)[:-22]+'ASCII_RFC'#RFC MEANS READY FOR CONVERT
 outputfiles4=os.path.realpath(__file__)[:-22]+'MSEED'
 
-####### STEP1 REPLACE ',' IN FLOAT WITH '.' && DELETE THE HEADER LINE #########
-
+################ STEP1 REPLACE ',' IN FLOAT WITH '.' ##########################
 
 copy_tree(inputfiles, outputfiles1)
 
@@ -55,9 +56,7 @@ ASCII_files_list_comma_replaced= FIND_FILES(outputfiles1)
 
 for i in range(len(ASCII_files_list)): 
     lines = file(ASCII_files_list[i], 'r').readlines() 
-    
-    del lines[0]
-    
+        
     for j in range(len(lines)): 
         lines[j]=lines[j][:2]+'.'+lines[j][3:18]+'.'+lines[j][19:34]+'.'+lines[j][35:]
     
@@ -72,16 +71,27 @@ ASCII_files_list_comma_replaced= FIND_FILES(outputfiles1)
 ASCII_files_list_channel_individualized=FIND_FILES(outputfiles2)
  
 for i in range(len(ASCII_files_list_comma_replaced)): 
-    lines = file(ASCII_files_list_comma_replaced[i], 'r').readlines()
     
-    for j in range(len(lines)): 
-        channelX=lines[j].split(',')[0]
-        channelY=lines[j].split(',')[1]
-        channelZ=lines[j].split(',')[2]
+    f= open(ASCII_files_list_comma_replaced[i], 'rb') 
+    reader = csv.reader(f, delimiter=',')
+    header = reader.next()
+    zipped = zip(*reader)
+    
+    channelX=zipped[0]
+    channelY=zipped[1]
+    channelZ=zipped[2]
+    
+    with open(ASCII_files_list_channel_individualized[i].replace('.asc','.Channel_X'), 'w') as f:
+        for tuple in channelX:
+            f.write('%s \n' % tuple)
+    with open(ASCII_files_list_channel_individualized[i].replace('.asc','.Channel_Y'), 'w') as f:
+        for tuple in channelY:
+            f.write('%s \n' % tuple)
+    with open(ASCII_files_list_channel_individualized[i].replace('.asc','.Channel_Z'), 'w') as f:
+        for tuple in channelZ:
+            f.write('%s \n' % tuple)
+    
 
-        file(ASCII_files_list_channel_individualized[i].replace('.asc','.Channel_X'), 'a').writelines(channelX+'\n')
-        file(ASCII_files_list_channel_individualized[i].replace('.asc','.Channel_Y'), 'a').writelines(channelY+'\n')
-        file(ASCII_files_list_channel_individualized[i].replace('.asc','.Channel_Z'), 'a').writelines(channelZ)
 for f in ASCII_files_list_channel_individualized:
     os.remove(f)
 
@@ -144,12 +154,8 @@ shutil.rmtree(outputfiles1)
 shutil.rmtree(outputfiles2)
 shutil.rmtree(outputfiles3)
 
+
+
 print 'WELL DONE, FINISH !'
-
-
-
-
-
-
-
+print 'Execution Time %s Seconds' %(time.time() -start )
 
